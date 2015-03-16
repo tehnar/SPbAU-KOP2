@@ -20,16 +20,16 @@ int sign(long long a)
 
 
 Point::Point() : x(0), y(0) {}
-Point::Point(long long _x, long long _y) : x(_x), y(_y) {}
+Point::Point(int _x, int _y) : x(_x), y(_y) {}
 
 void Point::print(FILE *f) const
 {
-	fprintf(f, "Point(%lld, %lld)", x, y); 		
+	fprintf(f, "Point(%d, %d)", x, y); 		
 }	
 
 void Point::read(FILE *f)
 {
-	fscanf(f, "%lld%lld", &x, &y);
+	fscanf(f, "%d%d", &x, &y);
 }
 
 Point Point::operator + (const Point &a) const
@@ -44,12 +44,12 @@ Point Point::operator - (const Point &a) const
 
 long long Point::operator * (const Point &a) const
 {
-	return x * a.x + y * a.y;
+	return 1ll * x * a.x + 1ll * y * a.y;
 }
 
 long long Point::operator % (const Point &a) const
 {
-	return x * a.y - y * a.x;
+	return 1ll * x * a.y - 1ll * y * a.x;
 }
 
 Point Point::operator * (int a) const
@@ -78,12 +78,12 @@ bool Point::operator == (const Point &a) const
 
 double Point::len() const
 {
-	return sqrt(sqr(x) + sqr(y));
+	return sqrt(sqr(1ll * x) + sqr(1ll * y));
 }
 
 long long Point::len2() const
 {
-	return sqr(x) + sqr(y);
+	return sqr(1ll * x) + sqr(1ll * y);
 }
 
 Segment::Segment(){}
@@ -92,7 +92,7 @@ Segment::Segment(const Point &a, const Point &b): first(a), second(b){}
 
 void Segment::print(FILE *f) const
 {
-	fprintf(f, "Segment {Point(%lld, %lld), Point(%lld, %lld)}", first.x, first.y, second.x, second.y);	
+	fprintf(f, "Segment {Point(%d, %d), Point(%d, %d)}", first.x, first.y, second.x, second.y);	
 }
 
 Ray::Ray(){}
@@ -101,7 +101,7 @@ Ray::Ray(const Point &a, const Point &b): start(a), dir(b){}
 
 void Ray::print(FILE *f) const
 {
-	fprintf(f, "Ray {Point(%lld, %lld), (%lld, %llf)}", start.x, start.y, dir.x, dir.y);
+	fprintf(f, "Ray {Point(%d, %d), (%d, %d)}", start.x, start.y, dir.x, dir.y);
 }
 
 Polygon::Polygon(const vector <Point> &p) : points(p) 

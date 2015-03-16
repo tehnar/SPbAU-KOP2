@@ -11,10 +11,10 @@ template <class T> T sqr(const T &a);
 
 struct Point
 {	
-	long long x, y;
+	int x, y;
 
 	Point();
-	Point(long long _x, long long _y);
+	Point(int _x, int _y);
 	void print(FILE *f = stdout) const;
 	void read(FILE *f = stdin);
 
