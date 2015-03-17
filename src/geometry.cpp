@@ -227,7 +227,6 @@ bool isInsideBS1(const Point &a, const Polygon &poly)
             (a - poly[l + 1]) % (poly[0] - poly[l + 1]) <= 0;
 }
 
-//TODO: shorten this code
 inline int findIntersection(const Point &a, const Polygon &poly, int from, int to, int signOfCompare)
 {
     int l, r, m;
