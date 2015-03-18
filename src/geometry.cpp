@@ -86,6 +86,13 @@ long long Point::len2() const
     return sqr(1ll * x) + sqr(1ll * y);
 }
 
+bool Point::compareByAngle(const Point &first, const Point &second) 
+{
+	if (sign(first.y) * sign(second.y) < 0)
+		return first.y == second.y ? first.x < second.x : first.y < second.y;
+	return first.y == 0 && second.y == 0 ? first.x < second.x : first % second > 0;
+}
+
 Segment::Segment(){}
 
 Segment::Segment(const Point &a, const Point &b): first(a), second(b){}

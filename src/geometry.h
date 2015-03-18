@@ -32,6 +32,9 @@ struct Point
 
     double len() const;
     long long len2() const;
+
+	//sorts by atan2
+	static bool compareByAngle(const Point &first, const Point &second);
 };
 
 struct Polygon

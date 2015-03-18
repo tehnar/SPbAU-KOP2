@@ -1,6 +1,7 @@
 #include "geometry.h"
 #include <cassert>
 #include <iostream>
+#include <algorithm>
 
 using namespace std;
                     
@@ -13,8 +14,12 @@ Polygon({Point(0, -1), Point(1, 0), Point(0, 1), Point(-1, 0)}),
 Polygon({Point(5, 0), Point(4, 1), Point(1, 1), Point(0, 0)})
 };
 
+
 int main()
 {
+	sort(handPolygons[0].points.begin(), handPolygons[0].points.end(), Point::compareByAngle);
+	handPolygons[0].print();
+	return 0;
     Polygon a({Point(2, 0), Point(2, 2), Point(0, 2), Point(0, 0)});
     assert(isInsideLinear(Point(0, 0), a));
     assert(isInsideLinear(Point(1, 1), a));
