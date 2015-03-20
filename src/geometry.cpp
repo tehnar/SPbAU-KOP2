@@ -86,13 +86,6 @@ long long Point::len2() const
     return sqr(1ll * x) + sqr(1ll * y);
 }
 
-bool Point::compareByAngle(const Point &first, const Point &second) 
-{
-	if (sign(first.y) * sign(second.y) < 0)
-		return first.y == second.y ? first.x < second.x : first.y < second.y;
-	return first.y == 0 && second.y == 0 ? first.x < second.x : first % second > 0;
-}
-
 Segment::Segment(){}
 
 Segment::Segment(const Point &a, const Point &b): first(a), second(b){}
@@ -127,12 +120,12 @@ Polygon::Polygon(const vector <Point> &p) : points(p)
 
 Point& Polygon::operator [] (int i) 
 {
-    return points[(i % points.size() + points.size()) % points.size()];
+    return points[(i % (int) points.size() + points.size()) % points.size()];
 }
 
 const Point& Polygon::operator [] (int i) const
 {
-    return points[(i % points.size() + points.size()) % points.size()];
+    return points[(i % (int) points.size() + points.size()) % points.size()];
 }
 
 int Polygon::size() const
@@ -266,4 +259,123 @@ bool isInsideBS2(const Point &a, const Polygon &poly)
     return cnt == 1;
 }
 
+bool compareByAngle(const Point &first, const Point &second) 
+{
+    if (sign(first.y) * sign(second.y) < 0)
+        return first.y == second.y ? first.x < second.x : first.y < second.y;
+    return first.y == 0 && second.y == 0 ? first.x < second.x : first % second > 0;
+}
 
+int findLeftTangentLinear(const Point &point, const Polygon &poly)
+{
+    for (int i = 0; i < poly.size(); i++)
+    {
+        if ((poly[i] - point) % (poly[i - 1] - point) <= 0 && (poly[i + 1] - point) % (poly[i] - point) > 0)               
+            return i;
+    }
+    return 0;
+}
+
+int findRightTangentLinear(const Point &point, const Polygon &poly)
+{
+    for (int i = 0; i < poly.size(); i++)
+    {
+        if ((poly[i] - point) % (poly[i - 1] - point) >= 0 && (poly[i + 1] - point) % (poly[i] - point) < 0)               
+            return i;
+    }
+    return 0;
+}
+
+int findLeftTangentBS(const Point &point, const Polygon &poly)
+{
+    int l, m, r;
+    l = 0, r = poly.size();
+    while (r - l > 1)
+    {
+        m = (l + r) / 2;
+        if ((poly[l + 1] - point) % (poly[l] - point) == 0)
+        {
+            l++;
+            continue;
+        }
+        if ((poly[l + 1] - point) % (poly[l] - point) > 0 && (poly[l] - point) % (poly[l - 1] - point) <= 0)
+            return l; 
+        if ((poly[l + 1] - point) % (poly[l] - point) < 0)
+        {
+            if ((poly[m + 1] - point) % (poly[m] - point) > 0)
+                r = m;
+            else
+            {
+                if ((poly[l] - point) % (poly[m] - point) < 0)
+                    r = m;
+                else
+                    l = m;
+            }
+        }
+        else
+        {
+            if ((poly[m + 1] - point) % (poly[m] - point) <= 0)
+                l = m;
+            else
+            {
+                if ((poly[l] - point) % (poly[m] - point) >= 0)
+                    r = m;
+                else
+                    l = m;
+            }
+        }
+    }
+    cerr << (poly[r] - point) % (poly[r - 1] - point) << endl;        
+    if ((poly[r] - point) % (poly[r - 1] - point) <= 0)
+        return r;
+    return l;                                   
+}
+
+int findRightTangentBS(const Point &point, const Polygon &poly)
+{
+    int l, m, r;
+    l = 0, r = poly.size();
+    while (r - l > 1)
+    {
+        m = (l + r) / 2;
+        if ((poly[l + 1] - point) % (poly[l] - point) == 0)
+        {
+            l++;
+            continue;
+        }
+        if ((poly[l + 1] - point) % (poly[l] - point) < 0 && (poly[l] - point) % (poly[l - 1] - point) >= 0)
+            return l; 
+        if ((poly[l + 1] - point) % (poly[l] - point) < 0)
+        {
+            if ((poly[m + 1] - point) % (poly[m] - point) >= 0)
+                l = m;
+            else
+            {
+                if ((poly[l] - point) % (poly[m] - point) <= 0)
+                    r = m;
+                else
+                    l = m;
+            }
+        }
+        else
+        {
+            if ((poly[m + 1] - point) % (poly[m] - point) < 0)
+                r = m;
+            else
+            {
+                if ((poly[l] - point) % (poly[m] - point) >= 0)
+                    r = m;
+                else
+                    l = m;
+            }
+        }
+    }                 
+    if ((poly[r] - point) % (poly[r - 1] - point) >= 0)
+        return r;
+    return l;                                   
+}
+
+double getDistanceTo(const Point &point, const Polygon &poly)
+{
+
+}
