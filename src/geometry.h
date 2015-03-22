@@ -33,9 +33,11 @@ struct Point
     double len() const;
     long long len2() const;
 
-    //sorts by atan2
 };
 
+// Structure that stores polygon in counter-clockwise order.
+// This polygon should be convex otherwise result of operations 
+// with it is undefined
 struct Polygon
 {
     Polygon(const std::vector <Point> &points);
@@ -70,19 +72,22 @@ std::ostream& operator << (std::ostream &out, const Ray &ray);
 std::ostream& operator << (std::ostream &out, const Segment &segment);
 
 
+// Compares points by angle with the horizontal axis. 
+// The angle lies in [-PI, PI)
 bool compareByAngle(const Point &first, const Point &second);
+
 bool isInsideLinear(const Point &point, const Polygon &poly);
 bool isInsideBS1(const Point &point, const Polygon &poly);
 bool isInsideBS2(const Point &point, const Polygon &poly);
 
-// Returns position of point in polygon such as line formed by this point
+// Returns index of point in polygon such as line formed by this point
 // and point "from" is left tangent to given polygon. If there exists
 // several such points then this function returns the most distant point.
 // If point "from" is inside polygon then returning value is undefined.
 int findLeftTangentLinear(const Point &from, const Polygon &poly);
 int findLeftTangentBS(const Point &from, const Polygon &poly);
 
-// Returns position of point in polygon such as line formed by this point
+// Returns index of point in polygon such as line formed by this point
 // and point "from" is right tangent to given polygon. If there exists
 // several such points then this function returns the most distant point 
 // If point "from" is inside polygon then returning value is undefined.
@@ -91,5 +96,12 @@ int findRightTangentBS(const Point &from, const Polygon &poly);
 
 bool isOnSegment(const Point &point, const Segment &segment);
 bool isIntersection(const Ray &ray, const Segment &segment);
-double getDistanceTo(const Point &point, const Polygon &poly);
+
+double distance(const Point &point, const Segment &poly);
+
+// Returns distance from point inside polygon to polygon.
+// If point is inside polygon then returning value is undefined.
+
+double distanceLinear(const Point &point, const Polygon &poly);
+double distance(const Point &point, const Polygon &poly);
 #endif

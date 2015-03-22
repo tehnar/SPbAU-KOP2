@@ -59,6 +59,10 @@ int main()
     assert(!isInsideBS2(Point(-1, 2), a));
     assert(!isInsideBS2(Point(10, 1), a));
     assert(!isInsideBS2(Point(3, -1), a));
+
+    assert(abs(distanceLinear(Point(-1, -1), a) - sqrt(2) < 0.0001));
+    assert(abs(distanceLinear(Point(-1, 1), a) - 1 < 0.0001));
+
     for (int i = -50; i <= 50; i++)
         for (int j = -50; j <= 50; j++)
         {
@@ -73,6 +77,7 @@ int main()
                 {
                     assert(poly[findLeftTangentLinear(Point(i, j), poly)] == poly[findLeftTangentBS(Point(i, j), poly)]);
                     assert(poly[findRightTangentLinear(Point(i, j), poly)] == poly[findRightTangentBS(Point(i, j), poly)]);
+                    assert(abs(distanceLinear(Point(i, j), poly) - distance(Point(i, j), poly)) < 1e-5);
                 }
             }
         

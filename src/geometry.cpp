@@ -325,7 +325,6 @@ int findLeftTangentBS(const Point &point, const Polygon &poly)
             }
         }
     }
-    cerr << (poly[r] - point) % (poly[r - 1] - point) << endl;        
     if ((poly[r] - point) % (poly[r - 1] - point) <= 0)
         return r;
     return l;                                   
@@ -375,7 +374,50 @@ int findRightTangentBS(const Point &point, const Polygon &poly)
     return l;                                   
 }
 
-double getDistanceTo(const Point &point, const Polygon &poly)
+double distance(const Point &point, const Segment &segment)
 {
+    double result = min((point - segment.first).len(), (point - segment.second).len());     
+    
+    if ((point - segment.first) * (segment.second - segment.first) >= 0 && (point - segment.second) * (segment.first - segment.second) >= 0) 
+        result = min(result, abs((segment.first - point) % (segment.second - point)) / (segment.first - segment.second).len());
+    return result;
+}
 
+double distanceLinear(const Point &point, const Polygon &poly)
+{
+    double result = 1e18;
+    for (int i = 0; i < poly.size(); i++)
+        result = min(result, distance(point, Segment(poly[i], poly[i + 1])));      
+    return result;
+}
+
+inline int findNearestPoint(int left, int right, const Point &point, const Polygon &poly)
+{
+    if (left >= right)
+        right += poly.size();
+    while (right - left > 3)
+    {
+        int left1 = (2 * left + right) / 3, right1 = (left + 2 * right) / 3; 
+        if ((point - poly[left1]).len2() > (point - poly[right1]).len2())
+            left = left1;
+        else
+            right = right1;
+    }
+    int result = left;
+    for (int i = left + 1; i <= right; i++)
+        if ((point - poly[result]).len2() > (point - poly[i]).len2())
+            result = i;
+    return result;
+}
+
+double distance(const Point &point, const Polygon &poly)
+{
+    int leftTangent = findLeftTangentBS(point, poly);
+    int rightTangent = findRightTangentBS(point, poly); 
+    int pos = findNearestPoint(leftTangent, rightTangent, point, poly);
+    double result;
+    result = min(distance(point, Segment(poly[pos], poly[pos + 1])), distance(point, Segment(poly[pos - 1], poly[pos])));
+    pos = findNearestPoint(rightTangent, leftTangent, point, poly);
+    result = min(result, min(distance(point, Segment(poly[pos], poly[pos + 1])), distance(point, Segment(poly[pos - 1], poly[pos]))));
+    return result;
 }
