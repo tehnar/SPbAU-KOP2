@@ -6,11 +6,6 @@
 using namespace std;
 
 
-template <class T> T sqr(const T &a)
-{
-    return a * a;
-}
-
 int sign(long long a)
 {
     if (!a)
@@ -158,11 +153,6 @@ Polygon::Polygon(const vector <Point> &p) : points(p)
     }
 }
 
-Point& Polygon::operator [] (int i) 
-{
-    return points[(i % (int) points.size() + points.size()) % points.size()];
-}
-
 const Point& Polygon::operator [] (int i) const
 {
     return points[(i % (int) points.size() + points.size()) % points.size()];
@@ -255,7 +245,7 @@ bool isInsideLinear(const Point &a, const Polygon &poly)
             return 1;
         if (a == poly[i])
             return 1;
-        cnt += isIntersection(Ray(a, Point(1e9 + 7, 1e9 + 9)), Segment(poly[i], poly[i + 1]));
+        cnt += isIntersection(Ray(a, Point(1<<30, (1<<30) - 1)), Segment(poly[i], poly[i + 1]));
     }
     return cnt % 2 == 1;
 }
@@ -317,7 +307,7 @@ bool compareByAngle(const Point &first, const Point &second)
     return first.y == 0 && second.y == 0 ? first.x < second.x : first % second > 0;
 }
 
-int findLeftTangentLinear(const Point &point, const Polygon &poly)
+int leftTangentLinear(const Point &point, const Polygon &poly)
 {
     for (int i = 0; i < poly.size(); i++)
     {
@@ -327,7 +317,7 @@ int findLeftTangentLinear(const Point &point, const Polygon &poly)
     return 0;
 }
 
-int findRightTangentLinear(const Point &point, const Polygon &poly)
+int rightTangentLinear(const Point &point, const Polygon &poly)
 {
     for (int i = 0; i < poly.size(); i++)
     {
@@ -337,7 +327,7 @@ int findRightTangentLinear(const Point &point, const Polygon &poly)
     return 0;
 }
 
-int findLeftTangentBS(const Point &point, const Polygon &poly)
+int leftTangent(const Point &point, const Polygon &poly)
 {
     int l, m, r;
     l = 0, r = poly.size();
@@ -381,7 +371,7 @@ int findLeftTangentBS(const Point &point, const Polygon &poly)
     return l;                                   
 }
 
-int findRightTangentBS(const Point &point, const Polygon &poly)
+int rightTangent(const Point &point, const Polygon &poly)
 {
     int l, m, r;
     l = 0, r = poly.size();
@@ -448,7 +438,9 @@ inline int findNearestPoint(int left, int right, const Point &point, const Polyg
         right += poly.size();
     while (right - left > 3)
     {
-        int left1 = (2 * left + right) / 3, right1 = (left + 2 * right) / 3; 
+        int left1 = (5 * left + 4 * right) / 9, right1 = (4 * left + 5 * right) / 9; 
+        if (left1 == right1)
+            break;
         if ((point - poly[left1]).len2() > (point - poly[right1]).len2())
             left = left1;
         else
@@ -463,12 +455,12 @@ inline int findNearestPoint(int left, int right, const Point &point, const Polyg
 
 double distance(const Point &point, const Polygon &poly)
 {
-    int leftTangent = findLeftTangentBS(point, poly);
-    int rightTangent = findRightTangentBS(point, poly); 
-    int pos = findNearestPoint(leftTangent, rightTangent, point, poly);
+    int left = leftTangent(point, poly);
+    int right = rightTangent(point, poly); 
+    int pos = findNearestPoint(left, right, point, poly);
     double result;
     result = min(distance(point, Segment(poly[pos], poly[pos + 1])), distance(point, Segment(poly[pos - 1], poly[pos])));
-    pos = findNearestPoint(rightTangent, leftTangent, point, poly);
+    pos = findNearestPoint(right, left, point, poly);
     result = min(result, min(distance(point, Segment(poly[pos], poly[pos + 1])), distance(point, Segment(poly[pos - 1], poly[pos]))));
     return result;
 }
@@ -477,14 +469,13 @@ PointDouble intersection(const Line &first, const Line &second, bool *ok)
 {
     if (Point(first.a, first.b) % Point(second.a, second.b) == 0ll)
     {     
-        if (ok != NULL)
-            *ok = 0;
+        setOk(ok, 0);
         return PointDouble(0, 0);
     }
-    if (ok != NULL)
-        *ok = 1;         
-    return PointDouble((double(second.c * first.b) - double(first.c * second.b)) / (double(second.b) * first.a - double(second.a) * first.b), 
-                       (double(second.c * first.a) - double(first.c * second.a)) / (double(second.a) * first.b - double(second.b) * first.a));
+    setOk(ok, 1);
+    
+    return PointDouble((double(second.c) * first.b - double(first.c) * second.b) / (double(second.b) * first.a - double(second.a) * first.b), 
+                       (double(second.c) * first.a - double(first.c) * second.a) / (double(second.a) * first.b - double(second.b) * first.a));
 }
 
 int maximalPointLinear(const Point &dir, const Polygon &poly)
@@ -546,43 +537,8 @@ int maximalPoint(const Point &dir, const Polygon &poly)
 
 int minimalPoint(const Point &dir, const Polygon &poly)
 {
-    int l = 0, r = poly.size(), m;
-    while (r - l > 1)
-    {
-        int lDir = sign((poly[l] - poly[l - 1]) * dir);
-        if (lDir == 0)
-        {
-            if ((poly[l + 1] - poly[l]) * dir > 0)
-                return l;
-            else
-            {
-                l++;
-                continue;
-            }
-        } 
-        m = (l + r) / 2;
-        if (lDir > 0)
-        {
-            if ((poly[m] - poly[m - 1]) * dir <= 0)
-                l = m;
-            else if ((poly[m] - poly[l]) * dir >= 0)
-                l = m;
-            else
-                r = m;       
-        }
-        else
-        {
-            if ((poly[m] - poly[m - 1]) * dir > 0)
-                r = m;
-            else if ((poly[m] - poly[l]) * dir <= 0)
-                l = m;
-            else
-                r = m;
-        }
-    }    
-    return l;
+    return maximalPoint(Point(-dir.x, -dir.y), poly);
 }
-
 
 SegmentDouble intersectionLinear(const Line &line, const Polygon &poly, bool *ok)
 {
@@ -619,6 +575,7 @@ SegmentDouble intersection(const Line &line, const Polygon &poly, bool *ok)
     int left = minimalPoint(line.normal(), poly), right = maximalPoint(line.normal(), poly);
     int cnt = 0;
     PointDouble points[2];
+
     for (int i = 0; i < 2; i++)
     {
         if (poly[left] * line.normal() + line.c == 0)
@@ -632,7 +589,8 @@ SegmentDouble intersection(const Line &line, const Polygon &poly, bool *ok)
                 return SegmentDouble(poly[left], poly[left]);
         }
         swap(left, right);
-    }
+    }      
+
     for(int i = 0; i < 2; i++)
     {
         int l = left, r = right, m;
@@ -660,9 +618,6 @@ SegmentDouble intersection(const Line &line, const Polygon &poly, bool *ok)
     else
     {
         setOk(ok, 1);
-        if (cnt == 1)
-            assert(0);
-        else
-            return SegmentDouble(points[0], points[1]);                        
+        return SegmentDouble(points[0], points[1]);                        
     }
 }

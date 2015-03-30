@@ -8,13 +8,16 @@
 #include <cassert>
 
 int sign(long long a);
-template <class T> T sqr(const T &a);
+template <class T> T sqr(const T &a)
+{
+    return a * a;
+}
 
 const double eps = 1e-8;
 struct PointDouble;
 
 // Structure that represents point or vector on plane.
-// Coordinates of point should not exceed 2^31 by an
+// Coordinates of point should not exceed 2^30 - 1 by an
 // absolute value
 struct Point
 {   
@@ -22,11 +25,13 @@ struct Point
 
     Point();
     Point(int x, int y);
-
     Point operator + (const Point &rhs) const;
     Point operator - (const Point &rhs) const;
+    // Scalar multiplication of two vectors
     long long operator * (const Point &rhs) const;
+    // Vector multiplication of two vectors
     long long operator % (const Point &rhs) const;
+    // Multiplication of vector by number
     Point operator * (int a) const;
 
     Point& operator += (const Point &rhs);
@@ -39,6 +44,7 @@ struct Point
     bool operator != (const Point &rhs) const;
 
     double len() const;
+    // Squared length of vector    
     long long len2() const;
 
 };
@@ -60,16 +66,18 @@ struct PointDouble
 struct Polygon
 {
     Polygon(const std::vector <Point> &points);
-    Point& operator [] (int i);
     const Point& operator [] (int i) const;
     void print(FILE *f = stdout) const;
     int size() const;
     int downmost, upmost;
+
+private:
     std::vector <Point> points;
 };
 
 struct Line
 {
+    // Constructs line through given two points
     Line(const Point &first, const Point &second);
     Point normal() const;
     Point direction() const;
@@ -120,18 +128,16 @@ bool isInsideBS1(const Point &point, const Polygon &poly);
 bool isInsideBS2(const Point &point, const Polygon &poly);
 
 // Returns index of point in polygon such as line formed by this point
-// and point "from" is left tangent to given polygon. If there exists
-// several such points then this function returns the most distant point.
+// and point "from" is left tangent to given polygon. 
 // If point "from" is inside polygon then returning value is undefined.
-int findLeftTangentLinear(const Point &from, const Polygon &poly);
-int findLeftTangentBS(const Point &from, const Polygon &poly);
+int leftTangentLinear(const Point &from, const Polygon &poly);
+int leftTangent(const Point &from, const Polygon &poly);
 
 // Returns index of point in polygon such as line formed by this point
-// and point "from" is right tangent to given polygon. If there exists
-// several such points then this function returns the most distant point 
+// and point "from" is right tangent to given polygon. 
 // If point "from" is inside polygon then returning value is undefined.
-int findRightTangentLinear(const Point &from, const Polygon &poly);
-int findRightTangentBS(const Point &from, const Polygon &poly);
+int rightTangentLinear(const Point &from, const Polygon &poly);
+int rightTangent(const Point &from, const Polygon &poly);
 
 bool isOnSegment(const Point &point, const Segment &segment);
 
@@ -156,7 +162,9 @@ int maximalPoint(const Point &dir, const Polygon &poly);
 int minimalPointLinear(const Point &dir, const Polygon &poly);
 int minimalPoint(const Point &dir, const Polygon &poly);
 
-
+// Returns intersection of two lines if they are not parallel to each other,
+// otherwise returning value is undefined.
+// Also if ok != NULL then it sets *ok to false if lines are parallel or to true otherwise
 PointDouble intersection(const Line &first, const Line &second, bool *ok = 0);
 
 // Intersects line and polygon and returns segment of line that lies inside
