@@ -253,8 +253,15 @@ bool isInsideLinear(const Point &a, const Polygon &poly)
 bool isInsideBS1(const Point &a, const Polygon &poly)
 {
     int l = 0, r = poly.size(), m;
+    #ifdef DEBUG
+    int cnt = 0;
+    #endif
     while (r - l > 1)
     {
+        #ifdef DEBUG
+        cnt++;
+        assert((1<<(cnt - 1)) <= poly.size());
+        #endif
         m = (l + r) / 2;
         if ((a - poly[0]) % (poly[m] - poly[0]) <= 0)
             l = m;
@@ -274,8 +281,15 @@ inline int findIntersection(const Point &a, const Polygon &poly, int from, int t
     l = from, r = to;
     if (l >= r)
         r += poly.size();
+    #ifdef DEBUG
+    int cnt = 0;
+    #endif
     while (r - l > 1)
     {
+        #ifdef DEBUG
+        cnt++;
+        assert((1<<(cnt - 1)) <= poly.size());
+        #endif
         m = (l + r) / 2;
         if (poly[m].y * signOfCompare >= a.y * signOfCompare)
             l = m;
@@ -331,8 +345,16 @@ int leftTangent(const Point &point, const Polygon &poly)
 {
     int l, m, r;
     l = 0, r = poly.size();
+    #ifdef DEBUG
+    int cnt = 0;
+    #endif
     while (r - l > 1)
     {
+        #ifdef DEBUG
+        cnt++;
+        if (cnt >= 3)
+            assert(1<<(cnt - 3) <= poly.size());
+        #endif
         m = (l + r) / 2;
         if ((poly[l + 1] - point) % (poly[l] - point) == 0)
         {
@@ -375,8 +397,16 @@ int rightTangent(const Point &point, const Polygon &poly)
 {
     int l, m, r;
     l = 0, r = poly.size();
+    #ifdef DEBUG
+    int cnt = 0;
+    #endif
     while (r - l > 1)
     {
+        #ifdef DEBUG
+        cnt++;
+        if (cnt >= 3)
+            assert(1<<(cnt - 3) <= poly.size());
+        #endif
         m = (l + r) / 2;
         if ((poly[l + 1] - point) % (poly[l] - point) == 0)
         {
@@ -436,9 +466,16 @@ inline int findNearestPoint(int left, int right, const Point &point, const Polyg
 {
     if (left >= right)
         right += poly.size();
+    #ifdef DEBUG
+    int cnt = 0;
+    #endif
     while (right - left > 3)
     {
-        int left1 = (5 * left + 4 * right) / 9, right1 = (4 * left + 5 * right) / 9; 
+        #ifdef DEBUG
+        cnt++;
+        assert(1<<(cnt - 1) <= poly.size());
+        #endif
+        int left1 = (left + right) / 2, right1 = left1 + 1; 
         if (left1 == right1)
             break;
         if ((point - poly[left1]).len2() > (point - poly[right1]).len2())
@@ -499,8 +536,18 @@ int minimalPointLinear(const Point &dir, const Polygon &poly)
 int maximalPoint(const Point &dir, const Polygon &poly)
 {
     int l = 0, r = poly.size(), m;
+    #ifdef DEBUG
+    int cnt = 0;
+    #endif
     while (r - l > 1)
     {
+        #ifdef DEBUG
+        cnt++;
+        if (cnt >= 2)
+        {
+            assert(1<<(cnt - 2) <= poly.size());
+        }
+        #endif
         int lDir = sign((poly[l] - poly[l - 1]) * dir);
         if (lDir == 0)
         {
@@ -591,8 +638,15 @@ SegmentDouble intersection(const Line &line, const Polygon &poly, bool *ok)
         swap(left, right);
     }      
 
+    #ifdef DEBUG
+    int counter = 0;
+    #endif
     for(int i = 0; i < 2; i++)
     {
+        #ifdef DEBUG
+        counter++;
+        assert(1<<((counter - 1) / 2) <= poly.size());
+        #endif
         int l = left, r = right, m;
         if (l >= r)
             r += poly.size();

@@ -244,9 +244,11 @@ int main()
             for (auto &poly : handPolygons)
             {                                        
                 Point pnt = Point(i, j);
-                
-                assert(poly[minimalPoint(pnt, poly)] * pnt == poly[minimalPointLinear(pnt, poly)] * pnt);
-                assert(poly[maximalPoint(pnt, poly)] * pnt == poly[maximalPointLinear(pnt, poly)] * pnt);
+                if (pnt != Point(0, 0))
+                {                
+                    assert(poly[minimalPoint(pnt, poly)] * pnt == poly[minimalPointLinear(pnt, poly)] * pnt);
+                    assert(poly[maximalPoint(pnt, poly)] * pnt == poly[maximalPointLinear(pnt, poly)] * pnt);
+                }
                 bool resultLinear = isInsideLinear(pnt, poly);
                 bool resultBS1 = isInsideBS1(pnt, poly);
                 bool resultBS2 = isInsideBS2(pnt, poly);
@@ -291,8 +293,11 @@ int main()
         int x = rand() % 10 + 5;
         Point pnt(rand() % (1<<(x + 1)) - (1<<x), rand() - (1<<x));
         bool in1 = isInsideLinear(pnt, poly), in2 = isInsideBS1(pnt, poly), in3 = isInsideBS2(pnt, poly);
-        assert(poly[minimalPoint(pnt, poly)] * pnt == poly[minimalPointLinear(pnt, poly)] * pnt);
-        assert(poly[maximalPoint(pnt, poly)] * pnt == poly[maximalPointLinear(pnt, poly)] * pnt);
+        if (pnt != Point(0, 0))
+        {
+            assert(poly[minimalPoint(pnt, poly)] * pnt == poly[minimalPointLinear(pnt, poly)] * pnt);
+            assert(poly[maximalPoint(pnt, poly)] * pnt == poly[maximalPointLinear(pnt, poly)] * pnt);
+        }
         Point pnt1(rand() % (1<<15) - (1<<14), rand() % (1<<15) - (1<<14));
         if (pnt1 != pnt)
             assert(intersection(Line(pnt, pnt1), poly) == intersectionLinear(Line(pnt, pnt1), poly));
