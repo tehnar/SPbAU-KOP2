@@ -228,7 +228,8 @@ void testIntersection()
 int main()
 {
     srand(time(NULL));    
-
+    isInsideBS1(Point(1, 2), handPolygons[0]);
+    return 0;
     testIsInside();
     testDistance();
     testMaximalPoint();

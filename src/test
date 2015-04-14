@@ -1,0 +1,32 @@
+center 0 0
+scale 6.666667 6.666667
+draw polygon 0 -5 3 -4 4 -3 5 0 4 3 3 4 0 5 -3 4 -4 3 -5 0 -4 -3 -3 -4 
+draw point 1 2 point
+draw point 0 -5 l
+draw point 0 -5 r
+draw point 0 5 m
+wait 1
+erase point l
+erase point r
+erase point m
+draw point 0 -5 l
+draw point 0 5 r
+draw point 5 0 m
+wait 1
+erase point l
+erase point r
+erase point m
+draw point 5 0 l
+draw point 0 5 r
+draw point 4 3 m
+wait 1
+erase point l
+erase point r
+erase point m
+draw point 4 3 l
+draw point 0 5 r
+draw point 3 4 m
+wait 1
+erase point l
+erase point r
+erase point m

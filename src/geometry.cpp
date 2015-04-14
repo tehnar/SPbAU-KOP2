@@ -255,7 +255,22 @@ bool isInsideBS1(const Point &a, const Polygon &poly)
     int l = 0, r = poly.size(), m;
     #ifdef DEBUG
     int cnt = 0;
-    #endif
+    #endif        
+    int minx = 1e9, miny = 1e9, maxx = -1e9, maxy = -1e9;
+    for (int i = 0; i < poly.size(); i++)
+    {
+        minx = std::min(minx, poly[i].x);
+        miny = std::min(miny, poly[i].y);
+        maxx = std::max(maxx, poly[i].x);
+        maxy = std::max(maxy, poly[i].y);
+    }
+    printf("center %d %d\n", (maxx + minx) / 2, (maxy + miny) / 2);
+    printf("scale %f %f\n", (maxx - minx) / 1.5, (maxy - miny) / 1.5); 
+    printf("draw polygon ");      
+    for (int i = 0; i < poly.size(); i++)
+        printf("%d %d ", poly[i].x, poly[i].y);
+    puts("");
+    printf("draw point %d %d point\n", a.x, a.y);
     while (r - l > 1)
     {
         #ifdef DEBUG
@@ -263,10 +278,17 @@ bool isInsideBS1(const Point &a, const Polygon &poly)
         assert((1<<(cnt - 1)) <= poly.size());
         #endif
         m = (l + r) / 2;
+        printf("draw point %d %d l\n", poly[l].x, poly[l].y);
+        printf("draw point %d %d r\n", poly[r].x, poly[r].y);
+        printf("draw point %d %d m\n", poly[m].x, poly[m].y);
+        printf("wait 1\n");
         if ((a - poly[0]) % (poly[m] - poly[0]) <= 0)
             l = m;
         else
             r = m;
+        printf("erase point l\n");
+        printf("erase point r\n");
+        printf("erase point m\n");
     }
     if (l == poly.size() - 1)
         return isOnSegment(a, Segment(poly[l], poly[0]));
