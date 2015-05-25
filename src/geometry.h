@@ -4,6 +4,7 @@
 #include <ostream>
 #include <istream>
 #include <cstdio>
+#include <cstdlib>
 #include <vector>
 #include <cassert>
 
@@ -124,20 +125,20 @@ std::ostream& operator << (std::ostream &out, const SegmentDouble &segment);
 bool compareByAngle(const Point &first, const Point &second);
 
 bool isInsideLinear(const Point &point, const Polygon &poly);
-bool isInsideBS1(const Point &point, const Polygon &poly);
+bool isInside(const Point &point, const Polygon &poly, FILE *out = NULL);
 bool isInsideBS2(const Point &point, const Polygon &poly);
 
 // Returns index of point in polygon such as line formed by this point
 // and point "from" is left tangent to given polygon. 
 // If point "from" is inside polygon then returning value is undefined.
 int leftTangentLinear(const Point &from, const Polygon &poly);
-int leftTangent(const Point &from, const Polygon &poly);
+int leftTangent(const Point &from, const Polygon &poly, FILE *out = NULL);
 
 // Returns index of point in polygon such as line formed by this point
 // and point "from" is right tangent to given polygon. 
 // If point "from" is inside polygon then returning value is undefined.
 int rightTangentLinear(const Point &from, const Polygon &poly);
-int rightTangent(const Point &from, const Polygon &poly);
+int rightTangent(const Point &from, const Polygon &poly, FILE *out = NULL);
 
 bool isOnSegment(const Point &point, const Segment &segment);
 
@@ -150,22 +151,22 @@ double distance(const Point &point, const Segment &segment);
 // If point is inside polygon then returning value is undefined.
 
 double distanceLinear(const Point &point, const Polygon &poly);
-double distance(const Point &point, const Polygon &poly);
+double distance(const Point &point, const Polygon &poly, FILE *out = NULL);
 
 // Returns index of point in polygon that has maximal projection on
 // vector dir 
 int maximalPointLinear(const Point &dir, const Polygon &poly);
-int maximalPoint(const Point &dir, const Polygon &poly);
+int maximalPoint(const Point &dir, const Polygon &poly, FILE *out = NULL);
 
 // Returns index of point in polygon that has minimal projection on
 // vector dir 
 int minimalPointLinear(const Point &dir, const Polygon &poly);
-int minimalPoint(const Point &dir, const Polygon &poly);
+int minimalPoint(const Point &dir, const Polygon &poly, FILE *out = NULL);
 
 // Returns intersection of two lines if they are not parallel to each other,
 // otherwise returning value is undefined.
 // Also if ok != NULL then it sets *ok to false if lines are parallel or to true otherwise
-PointDouble intersection(const Line &first, const Line &second, bool *ok = 0);
+PointDouble intersection(const Line &first, const Line &second, bool *ok = 0, FILE *out = NULL);
 
 // Intersects line and polygon and returns segment of line that lies inside
 // polygon. 
@@ -173,5 +174,29 @@ PointDouble intersection(const Line &first, const Line &second, bool *ok = 0);
 // If "ok" is not null than *ok will be set to true if intersection exists
 // or false otherwise
 SegmentDouble intersectionLinear(const Line &line, const Polygon &poly, bool *ok = NULL);
-SegmentDouble intersection(const Line &line, const Polygon &poly, bool *ok = NULL);
+SegmentDouble intersection(const Line &line, const Polygon &poly, bool *ok = NULL, FILE *out = NULL);
+
+
+Polygon genLargePolygon(int vcnt, double radius = RAND_MAX);                                               
+
+void drawPoint(FILE *out, const Point& point, const char *name = "");
+
+void drawPoint(FILE *out, const PointDouble& point, const char *name = "");
+
+void drawSegment(FILE *out, const Point &from, const Point &to, const char* color, const char* name = "");
+
+void drawVector(FILE *out, const Point &from, const Point &to, const char* color, const char* name = "");
+
+void drawRay(FILE *out, const Point &from, const Point &dir, const char* color, const char* name = "");
+
+void drawLine(FILE *out, const Line &line, const char* color);
+
+void drawAngle(FILE *out, const Point &vertex, const Point &first, const Point &second, bool withArc = 0);
+
+void drawText(FILE *out, const char *text);
+
+void endOfSlide(FILE *out);
+
+void endOfStep(FILE *out);
+
 #endif
